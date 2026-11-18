@@ -1,0 +1,254 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Stagewise – Project command centre</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f6fb;--card:#fff;--ink:#17172e;--mut:#707590;--line:#ebecf4;--side:#14152d;--pri:#5b4bdb;--ok:#16a06f;--warn:#d97b08;--bad:#e04a55;--okb:#e1f6ec;--warnb:#fff0dc;--badb:#fde6e8;--prib:#ece9fd;color-scheme:light}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1317;--card:#151d24;--ink:#e8eef3;--mut:#8d9ba8;--line:#26313b;--side:#08181c;--pri:#6c93ff;--ok:#3dc4a4;--warn:#e8a93a;--bad:#f0777e;--okb:#12332d;--warnb:#3a2d10;--badb:#3b1a1d;--prib:#1b2845;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d1317;--card:#151d24;--ink:#e8eef3;--mut:#8d9ba8;--line:#26313b;--side:#08181c;--pri:#6c93ff;--ok:#3dc4a4;--warn:#e8a93a;--bad:#f0777e;--okb:#12332d;--warnb:#3a2d10;--badb:#3b1a1d;--prib:#1b2845;color-scheme:dark}
+*{box-sizing:border-box}html,body{height:100%;margin:0}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{background:var(--bg);color:var(--ink);font:500 14px/1.45 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+button,select,input,textarea{font:inherit;color:inherit}button{cursor:pointer}
+.app{display:grid;grid-template-columns:232px 1fr;min-height:100%}
+.side{background:var(--side);color:#cfe3e6;padding:20px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:4px}
+.brand{font-weight:800;font-size:19px;color:#fff;padding:2px 10px 18px;letter-spacing:-.3px;display:flex;gap:9px;align-items:center}
+.brand i{width:24px;height:30px;border-radius:50% 50% 50% 50%/62% 62% 38% 38%;background:linear-gradient(180deg,#ffc233,#f0431f);display:block}
+.nav{border:0;background:none;color:inherit;text-align:left;padding:10px 12px;border-radius:10px;font-weight:600;display:flex;justify-content:space-between}
+.nav:hover{background:rgba(255,255,255,.07)}.nav.on{background:var(--pri);color:#fff}
+.side .foot{margin-top:auto;font-size:12px;padding:10px;color:#aab0cc}.chip{display:flex;gap:10px;align-items:center}
+.main{padding:22px 28px 40px;min-width:0}
+.top{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:20px}
+.top h1{font-size:24px;margin:0;letter-spacing:-.5px;flex:1;min-width:160px}
+.seg{display:flex;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:3px}
+.seg button{border:0;background:none;padding:7px 14px;border-radius:9px;font-weight:700;color:var(--mut)}.seg button.on{background:var(--pri);color:#fff}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:8px 14px;font-weight:700}.btn.p{background:var(--pri);border-color:var(--pri);color:#fff}
+.btn.sm{padding:4px 10px;font-size:12px}
+select,input,textarea{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:7px 9px;max-width:100%}
+textarea{width:100%;min-height:70px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 2px 8px rgba(30,30,90,.05)}
+.card h2{font-size:15px;margin:0 0 14px;display:flex;justify-content:space-between;align-items:center}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:16px}
+.kpi{display:flex;gap:12px;align-items:center}.kpi i{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-style:normal;font-size:20px;background:var(--prib);color:var(--pri);flex:none}.kpi.k-ok i{background:var(--okb);color:var(--ok)}.kpi.k-warn i{background:var(--warnb);color:var(--warn)}.kpi.k-bad i{background:var(--badb);color:var(--bad)}.kpi span{color:var(--mut);font-size:13px;font-weight:600;display:block}.kpi b{font-size:26px;letter-spacing:-.5px;line-height:1.1}
+
+.grid{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:16px}.col{display:flex;flex-direction:column;gap:16px;min-width:0}
+.badge{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:700;white-space:nowrap}
+.b-ok{background:var(--okb);color:var(--ok)}.b-warn{background:var(--warnb);color:var(--warn)}.b-bad{background:var(--badb);color:var(--bad)}.b-pri{background:var(--prib);color:var(--pri)}.b-mut{background:var(--bg);color:var(--mut)}
+.bar{height:7px;border-radius:9px;background:var(--bg);overflow:hidden}.bar i{display:block;height:100%;border-radius:9px;background:var(--pri)}
+.prow{display:grid;grid-template-columns:minmax(150px,1.3fr) minmax(110px,1fr) 120px 90px;gap:14px;align-items:center;padding:13px 6px;border-top:1px solid var(--line);cursor:pointer;border-radius:8px}
+.prow:hover{background:var(--bg)}.prow:first-of-type{border-top:0}
+.prow strong{display:block}.sub{color:var(--mut);font-size:12.5px}
+.mini{display:flex;gap:3px;margin-bottom:5px}.mini b{flex:1;height:7px;border-radius:4px;background:var(--line)}.mini b.d{background:var(--ok)}.mini b.c{background:var(--pri)}
+.track{display:flex;margin:10px 0 4px}.step{flex:1;position:relative;text-align:center;font-size:12px;color:var(--mut);font-weight:600}
+.step i{width:28px;height:28px;border-radius:50%;margin:0 auto 7px;display:grid;place-items:center;font-style:normal;font-weight:800;background:var(--card);border:2px solid var(--line);position:relative;z-index:1}
+.step::before{content:"";position:absolute;top:13px;left:-50%;width:100%;height:3px;background:var(--line)}.step:first-child::before{display:none}
+.step.done::before,.step.cur::before{background:var(--ok)}
+.step.done i{background:var(--ok);border-color:var(--ok);color:#fff}.step.done{color:var(--ink)}
+.step.cur i{border-color:var(--pri);color:var(--pri);box-shadow:0 0 0 5px var(--prib);animation:pl 2.2s ease-in-out infinite}.step.cur{color:var(--pri);font-weight:800}
+@keyframes pl{50%{box-shadow:0 0 0 9px transparent}}@media(prefers-reduced-motion:reduce){.step.cur i{animation:none}}
+.feed{display:flex;flex-direction:column;gap:13px}.fi{display:flex;gap:10px}.fi p{margin:0}.fi small{color:var(--mut)}
+.av{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:11.5px;flex:none}
+.li{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:9px 0;border-top:1px solid var(--line)}.li:first-of-type{border-top:0}
+table{width:100%;border-collapse:collapse}th{text-align:left;color:var(--mut);font-size:12px;padding:6px 8px}td{padding:9px 8px;border-top:1px solid var(--line);vertical-align:middle}
+.tw{overflow-x:auto}
+.ban{background:var(--warnb);color:var(--warn);border-radius:12px;padding:12px 14px;display:flex;gap:10px;justify-content:space-between;align-items:center;margin-bottom:14px;font-weight:700}
+.team{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.ov{position:fixed;inset:0;background:rgba(5,12,16,.55);display:grid;place-items:center;padding:16px;z-index:50}
+.modal{background:var(--card);border-radius:18px;padding:22px;width:min(520px,100%);max-height:92vh;overflow:auto}
+.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.mh h3{margin:0;font-size:18px}.x{border:0;background:none;font-size:24px;color:var(--mut)}
+.form{display:grid;gap:12px}.form label{display:grid;gap:4px;font-weight:700;font-size:13px}.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.emp{max-width:980px}.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}.tabs button{border:1px solid var(--line);background:var(--card);border-radius:99px;padding:6px 14px;font-weight:700;color:var(--mut)}.tabs .on{background:var(--pri);color:#fff;border-color:var(--pri)}
+.tcard{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:10px}
+.tcard.dn .tt{text-decoration:line-through;color:var(--mut)}.tb{flex:1;min-width:0}.tt{font-weight:800;font-size:15.5px}.tm{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px;color:var(--mut);font-size:12.5px}
+.chk{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);background:none;color:transparent;font-weight:800;flex:none}.chk:hover{border-color:var(--ok)}.chk.on{background:var(--ok);border-color:var(--ok);color:#fff}
+.tr{display:flex;flex-direction:column;gap:6px;align-items:flex-end}.lnk{border:0;background:none;color:var(--pri);font-weight:700;font-size:12.5px}
+.ins{background:var(--bg);border-radius:10px;padding:10px 12px;margin:10px 0 0}.bad{color:var(--bad);font-weight:700}
+.bell{position:relative}.bell em{position:absolute;top:-6px;right:-6px;background:var(--bad);color:#fff;border-radius:99px;font-size:11px;font-style:normal;padding:0 6px}
+.pop{position:absolute;right:0;top:44px;width:300px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;z-index:20;box-shadow:0 12px 30px rgba(0,0,0,.18)}
+.bars{display:grid;gap:12px}.bl{display:flex;justify-content:space-between;font-weight:700;margin-bottom:4px}
+.donut{display:flex;gap:20px;align-items:center;flex-wrap:wrap}.donut ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--ink);color:var(--card);padding:10px 18px;border-radius:12px;font-weight:700;z-index:60}
+.pill{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-weight:600}.top h1 small{display:block;font-size:14px;font-weight:500;color:var(--mut);letter-spacing:0;margin-top:3px}.live{color:var(--ok);font-size:13px;font-weight:700}.live::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:6px}.lg{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--mut);margin-top:6px}.lg i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}.kpis.three{grid-template-columns:repeat(3,1fr)}.banner{margin-top:18px;border-radius:16px;padding:18px 20px;background:linear-gradient(120deg,var(--prib),var(--card));border:1px solid var(--line)}.banner b{display:block;font-size:16px}
+@media(max-width:1000px){.kpis.three{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}.app{grid-template-columns:1fr}.side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;padding:10px}.brand{padding:4px 8px}.side .foot{display:none}.prow{grid-template-columns:1fr 1fr}.main{padding:16px}}
+</style></head><body><div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.js"></script>
+<script>
+const {useState,useEffect}=React;const h=htm.bind(React.createElement);
+/* ---------- data layer ---------- */
+const STAGES=['Enquiry','Planning','Production','Quality Check','Approval','Delivery','Completed'];
+const STATUS=['To Do','In Progress','Blocked','Done'];
+const pad=n=>String(n).padStart(2,'0');
+const day=n=>{const d=new Date();d.setDate(d.getDate()+n);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())};
+const diff=s=>Math.round((new Date(s+'T00:00')-new Date(day(0)+'T00:00'))/864e5);
+const fmt=s=>new Date(s+'T00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+const dueLabel=s=>{const d=diff(s);return d===0?'Due today':d===1?'Due tomorrow':d<0?(-d)+'d overdue':'Due '+fmt(s)};
+const rel=ts=>{const m=Math.round((Date.now()-ts)/6e4);return m<1?'just now':m<60?m+'m ago':m<1440?Math.round(m/60)+'h ago':Math.round(m/1440)+'d ago'};
+const uid=()=>Math.random().toString(36).slice(2,9);
+const COLORS=['#2457d6','#14866d','#b4540a','#8a3ffc','#c2185b','#0e7490','#4d7c0f','#a16207'];
+function seed(){
+ const employees=[['e1','Aarav Mehta','Video Editor'],['e2','Diya Rao','Designer'],['e3','Kabir Shah','Producer'],['e4','Isha Nair','Copywriter'],['e5','Rohan Iyer','QA Lead'],['e6','Meera Joshi','Account Manager'],['e7','Vikram Das','Developer'],['e8','Ananya Roy','Strategist']].map(([id,name,role])=>({id,name,role}));
+ const projects=[['p1','Fuel India Brand Campaign','Fuel India',2,6],['p2','Aurora Skincare Launch','Aurora Beauty',1,20],['p3','Metro Mall Festive Shoot','Metro Mall',3,3],['p4','Zenith Fitness Website','Zenith Gym',2,-2],['p5','Harvest Foods Packaging','Harvest Foods',3,12]].map(([id,name,client,stage,d])=>({id,name,client,stage,due:day(d)}));
+ const tasks=[
+ ['Edit Instagram Reel','p1',2,'e1','High',0,'In Progress','Cut a 30s reel from the Day 2 footage. Use the licensed track, add English and Hindi captions, end on the logo lockup.'],
+ ['Colour grade hero film','p1',2,'e1','Medium',2,'To Do','Match the grade to the approved LUT. Export a ProRes master.'],
+ ['Shoot behind-the-scenes photos','p1',2,'e3','Low',-1,'Done','Capture 20 candid stills for the social rollout.'],
+ ['Write campaign captions','p1',2,'e4','Medium',1,'To Do','Five captions per platform, playful tone, include the campaign hashtag.'],
+ ['Finalise media plan','p1',1,'e8','High',-4,'Done','Lock channel split and budget.'],
+ ['Social ad creatives','p1',2,'e2','High',3,'To Do','Six static ads in 1:1 and 9:16.'],
+ ['Moodboard and tone guide','p2',1,'e2','High',2,'In Progress','Skin-first, soft daylight, no heavy filters.'],
+ ['Influencer shortlist','p2',1,'e8','Medium',4,'To Do','Twelve creators with engagement data.'],
+ ['Launch calendar','p2',1,'e6','Medium',5,'To Do','Week-by-week plan from teaser to launch.'],
+ ['Review final cuts','p3',3,'e5','High',0,'In Progress','Check pacing, logo placement and brand colours.'],
+ ['Fix audio sync','p3',3,'e1','High',-1,'Blocked','Waiting on the original audio files from the venue.'],
+ ['Export festive deliverables','p3',3,'e3','Medium',1,'To Do','Vertical, square and 16:9 exports.'],
+ ['Build landing page','p4',2,'e7','High',-3,'In Progress','Implement the approved Figma design with the signup form.'],
+ ['Responsive QA pass','p4',2,'e5','Medium',-1,'To Do','Test on iOS Safari, Android Chrome and desktop.'],
+ ['Pricing page copy','p4',2,'e4','Medium',0,'To Do','Three plans, plain language, no jargon.'],
+ ['Pack mockup revisions','p5',3,'e2','Medium',-2,'Done','Apply client feedback to the three flavours.'],
+ ['Print-proof check','p5',3,'e5','High',-1,'Done','Verify bleed, colour profile and barcode.'],
+ ['Client sign-off deck','p5',4,'e6','High',1,'In Progress','Summarise changes and collect written approval.']
+ ].map((t,i)=>({id:'t'+i,title:t[0],pid:t[1],stage:t[2],emp:t[3],pri:t[4],due:day(t[5]),status:t[6],instr:t[7]}));
+ const m=60000,now=Date.now();
+ const activity=[[9,'Rohan Iyer','started “Review final cuts”','p3'],[35,'Vikram Das','updated “Build landing page” to In Progress','p4'],[80,'Ananya Roy','completed “Finalise media plan”','p1'],[190,'Rohan Iyer','completed “Print-proof check”','p5'],[300,'Diya Rao','completed “Pack mockup revisions”','p5'],[1500,'Kabir Shah','completed “Shoot behind-the-scenes photos”','p1']].map(a=>({id:uid(),ts:now-a[0]*m,who:a[1],text:a[2],pid:a[3]}));
+ return{employees,projects,tasks,activity,notifs:[{id:uid(),emp:'e1',text:'New task: Edit Instagram Reel',ts:now-20*m,read:false}]};
+}
+const KEY='stagewise-v1';
+const load=()=>{try{const r=localStorage.getItem(KEY);if(r)return JSON.parse(r)}catch(e){}return seed()};
+const save=s=>{try{localStorage.setItem(KEY,JSON.stringify(s))}catch(e){}};
+const prog=(p,T)=>{if(p.stage===6)return 100;const t=T.filter(x=>x.pid===p.id&&x.stage===p.stage);const f=t.length?t.filter(x=>x.status==='Done').length/t.length:0;return Math.min(99,Math.round((p.stage+f)/6*100))};
+const overdue=t=>t.status!=='Done'&&t.due<day(0);
+const health=(p,T)=>{if(p.stage===6)return'done';if(p.due<day(0))return'delayed';if(T.some(t=>t.pid===p.id&&overdue(t))||(p.due<=day(5)&&prog(p,T)<70))return'risk';return'ok'};
+const HL={ok:['On track','ok'],risk:['At risk','warn'],delayed:['Delayed','bad'],done:['Completed','pri']};
+const pending=S=>S.projects.filter(p=>{if(p.stage>=5)return false;const t=S.tasks.filter(x=>x.pid===p.id&&x.stage===p.stage);return t.length&&t.every(x=>x.status==='Done')});
+const nm=(S,id)=>(S.employees.find(e=>e.id===id)||{}).name||'Unassigned';
+const log=(s,who,text,pid)=>({...s,activity:[{id:uid(),ts:Date.now(),who,text,pid},...s.activity].slice(0,60)});
+/* ---------- small UI ---------- */
+const Badge=({c,children})=>h`<span className=${'badge b-'+c}>${children}</span>`;
+const Av=({S,id})=>{const i=S.employees.findIndex(e=>e.id===id);const n=nm(S,id);return h`<span className="av" style=${{background:COLORS[i%8]}} title=${n}>${n.split(' ').map(x=>x[0]).join('')}</span>`};
+const Bar=({v})=>h`<div className="bar"><i style=${{width:v+'%'}}></i></div>`;
+const Mini=({stage})=>h`<div className="mini">${STAGES.map((s,i)=>h`<b key=${i} title=${s} className=${i<stage||stage===6?'d':i===stage?'c':''}></b>`)}</div>`;
+const Track=({stage})=>h`<div className="track">${STAGES.map((s,i)=>{const d=i<stage||stage===6;return h`<div key=${i} className=${'step '+(d?'done':i===stage?'cur':'')}><i>${d?'✓':i+1}</i>${s}</div>`})}</div>`;
+const Pri=({p})=>h`<${Badge} c=${p==='High'?'bad':p==='Medium'?'warn':'mut'}>${p}<//>`;
+const Sel=({v,on,opts,...r})=>h`<select value=${v} onChange=${e=>on(e.target.value)} ...${r}>${opts.map(o=>h`<option key=${o[0]} value=${o[0]}>${o[1]}</option>`)}</select>`;
+const Modal=({title,onClose,children})=>h`<div className="ov" onClick=${onClose}><div className="modal" onClick=${e=>e.stopPropagation()}><div className="mh"><h3>${title}</h3><button className="x" onClick=${onClose} aria-label="Close">×</button></div>${children}</div></div>`;
+function TaskForm({S,pid,onSave,onClose}){
+ const [f,setF]=useState({title:'',pid:pid||S.projects[0].id,stage:null,emp:S.employees[0].id,pri:'Medium',due:day(3),instr:''});
+ const proj=S.projects.find(p=>p.id===f.pid),stage=f.stage==null?proj.stage:f.stage,set=k=>e=>setF({...f,[k]:e.target.value});
+ return h`<${Modal} title="Create task" onClose=${onClose}><div className="form">
+ <label>Task title<input value=${f.title} onChange=${set('title')} placeholder="e.g. Edit Instagram Reel"/></label>
+ <div className="two"><label>Project<select value=${f.pid} onChange=${e=>setF({...f,pid:e.target.value,stage:null})}>${S.projects.map(p=>h`<option key=${p.id} value=${p.id}>${p.name}</option>`)}</select></label>
+ <label>Stage<select value=${stage} onChange=${e=>setF({...f,stage:+e.target.value})}>${STAGES.map((s,i)=>h`<option key=${i} value=${i}>${s}</option>`)}</select></label></div>
+ <div className="two"><label>Assign to<select value=${f.emp} onChange=${set('emp')}>${S.employees.map(e=>h`<option key=${e.id} value=${e.id}>${e.name}</option>`)}</select></label>
+ <label>Priority<select value=${f.pri} onChange=${set('pri')}>${['High','Medium','Low'].map(x=>h`<option key=${x}>${x}</option>`)}</select></label></div>
+ <label>Due date<input type="date" value=${f.due} onChange=${set('due')}/></label>
+ <label>Instructions<textarea value=${f.instr} onChange=${set('instr')} placeholder="What should the employee do?"></textarea></label>
+ <button className="btn p" disabled=${!f.title.trim()} onClick=${()=>onSave({...f,title:f.title.trim(),stage,status:'To Do'})}>Create and assign task</button></div><//>`;
+}
+function ProjectForm({onSave,onClose}){
+ const [f,setF]=useState({name:'',client:'',due:day(30)}),set=k=>e=>setF({...f,[k]:e.target.value});
+ return h`<${Modal} title="Create project" onClose=${onClose}><div className="form">
+ <label>Project name<input value=${f.name} onChange=${set('name')} placeholder="e.g. Spring Collection Launch"/></label>
+ <label>Client<input value=${f.client} onChange=${set('client')}/></label>
+ <label>Deadline<input type="date" value=${f.due} onChange=${set('due')}/></label>
+ <p className="sub" style=${{margin:0}}>The project starts at Enquiry and moves through all seven stages.</p>
+ <button className="btn p" disabled=${!f.name.trim()} onClick=${()=>onSave({...f,name:f.name.trim(),client:f.client.trim()||'Internal'})}>Create project</button></div><//>`;
+}
+/* ---------- manager screens ---------- */
+const Feed=({S,pid,n=7})=>h`<div className="feed">${S.activity.filter(a=>!pid||a.pid===pid).slice(0,n).map(a=>{const e=S.employees.find(x=>x.name===a.who);const p=S.projects.find(x=>x.id===a.pid);return h`<div className="fi" key=${a.id}>${e?h`<${Av} S=${S} id=${e.id}/>`:h`<span className="av" style=${{background:'#475569'}}>M</span>`}<div><p><b>${a.who}</b> ${a.text}</p><small>${p?p.name+' · ':''}${rel(a.ts)}</small></div></div>`})}</div>`;
+function Perf({S}){const ps=S.projects.slice(0,3),days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],cl=['var(--ok)','var(--pri)','#3b82f6'],W=520,Hh=150,x=i=>40+i*(W-60)/6,y=v=>Hh-10-v*(Hh-20)/100;
+ return h`<div className="card"><h2>Project performance <span className="sub">Illustrative weekly trend</span></h2><svg viewBox=${'0 0 '+W+' '+(Hh+24)} width="100%">${[0,50,100].map(v=>h`<g key=${v}><line x1="36" x2=${W-16} y1=${y(v)} y2=${y(v)} stroke="currentColor" opacity=".12"/><text x="30" y=${y(v)+4} textAnchor="end" fontSize="10" fill="currentColor" opacity=".6">${v}%</text></g>`)}${days.map((d,i)=>h`<text key=${d} x=${x(i)} y=${Hh+12} textAnchor="middle" fontSize="10" fill="currentColor" opacity=".6">${d}</text>`)}${ps.map((p,k)=>{const end=prog(p,S.tasks),pts=days.map((d,i)=>Math.max(4,Math.round(end*(.55+.45*i/6)+Math.sin(i*1.7+k*2)*5)));pts[6]=end;return h`<polyline key=${p.id} fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style=${{stroke:cl[k]}} points=${pts.map((v,i)=>x(i)+','+y(v)).join(' ')}/>`})}</svg><div className="lg">${ps.map((p,k)=>h`<span key=${p.id}><i style=${{background:cl[k]}}></i>${p.name}</span>`)}</div></div>`}
+function Dashboard({S,A,go}){
+ const act=S.projects.filter(p=>p.stage<6),H=p=>health(p,S.tasks),cnt=k=>act.filter(p=>H(p)===k).length;
+ const overall=act.length?Math.round(act.reduce((a,p)=>a+prog(p,S.tasks),0)/act.length):0;
+ const pend=pending(S),dl=S.tasks.filter(t=>t.status!=='Done').sort((a,b)=>a.due<b.due?-1:1).slice(0,5);
+ const load=S.employees.map(e=>({e,n:S.tasks.filter(t=>t.emp===e.id&&t.status!=='Done').length}));
+ return h`<div>
+ <div className="kpis">${[['Total projects',act.length,'','▣'],['On track',cnt('ok'),'k-ok','✓'],['At risk',cnt('risk'),'k-warn','◷'],['Delayed',cnt('delayed'),'k-bad','Ⅱ'],['Completion',overall+'%','','◔']].map(k=>h`<div key=${k[0]} className=${'card kpi '+k[2]}><i>${k[3]}</i><div><span>${k[0]}</span><b>${k[1]}</b></div></div>`)}</div>
+ <div className="grid"><div className="col">
+ <div className="card"><h2>Projects overview <span className="sub">Click a project for its full workflow</span></h2>${S.projects.map(p=>{const hl=HL[H(p)];return h`<div className="prow" key=${p.id} onClick=${()=>go('project',p.id)}><div><strong>${p.name}</strong><span className="sub">${p.client}</span></div><div><${Mini} stage=${p.stage}/><span className="sub">Stage ${Math.min(p.stage+1,7)} of 7: ${STAGES[p.stage]}</span></div><div><b>${prog(p,S.tasks)}%</b><${Bar} v=${prog(p,S.tasks)}/></div><div><${Badge} c=${hl[1]}>${hl[0]}<//><div className="sub">${fmt(p.due)}</div></div></div>`})}</div>
+ <${Perf} S=${S}/><div className="card"><h2>Employee workload <span className="sub">Open tasks per person</span></h2><div className="bars">${load.map(({e,n})=>h`<div key=${e.id}><div className="bl"><span>${e.name} <span className="sub">${e.role}</span></span><span>${n}</span></div><${Bar} v=${Math.min(100,n/5*100)}/></div>`)}</div></div>
+ </div><div className="col">
+ <div className="card"><h2>Pending approvals</h2>${pend.length?pend.map(p=>h`<div className="li" key=${p.id}><div><b>${p.name}</b><div className="sub">${STAGES[p.stage]} tasks done. Ready for ${STAGES[p.stage+1]}.</div></div><button className="btn sm p" onClick=${()=>A.stage(p.id,p.stage+1)}>Approve</button></div>`):h`<p className="sub">Nothing waiting. Approvals appear when every task in a stage is complete.</p>`}</div>
+ <div className="card"><h2>Team activity <span className="live">Live</span></h2><${Feed} S=${S}/></div>
+ <div className="card"><h2>Upcoming deadlines</h2>${dl.map(t=>h`<div className="li" key=${t.id}><div><b>${t.title}</b><div className="sub">${nm(S,t.emp)}</div></div><span className=${overdue(t)?'bad':'sub'}>${dueLabel(t.due)}</span></div>`)}</div>
+ </div></div></div>`;
+}
+function Projects({S,go}){return h`<div className="card">${S.projects.map(p=>{const hl=HL[health(p,S.tasks)];return h`<div className="prow" key=${p.id} onClick=${()=>go('project',p.id)}><div><strong>${p.name}</strong><span className="sub">${p.client}</span></div><div><${Mini} stage=${p.stage}/><span className="sub">${STAGES[p.stage]}</span></div><div><b>${prog(p,S.tasks)}%</b><${Bar} v=${prog(p,S.tasks)}/></div><div><${Badge} c=${hl[1]}>${hl[0]}<//></div></div>`})}</div>`}
+function TaskTable({S,A,tasks,showProject}){
+ return h`<div className="tw"><table><thead><tr><th>Task</th>${showProject&&h`<th>Project</th>`}<th>Stage</th><th>Assignee</th><th>Priority</th><th>Due</th><th>Status</th></tr></thead><tbody>${tasks.map(t=>h`<tr key=${t.id}><td><b>${t.title}</b></td>${showProject&&h`<td>${S.projects.find(p=>p.id===t.pid).name}</td>`}<td>${STAGES[t.stage]}</td>
+ <td><${Sel} v=${t.emp} on=${v=>A.reassign(t.id,v)} opts=${S.employees.map(e=>[e.id,e.name])}/></td><td><${Pri} p=${t.pri}/></td><td className=${overdue(t)?'bad':''}>${dueLabel(t.due)}</td>
+ <td><${Sel} v=${t.status} on=${v=>A.status(t.id,v)} opts=${STATUS.map(x=>[x,x])}/></td></tr>`)}</tbody></table></div>`;
+}
+function Detail({S,A,pid,openTask}){
+ const p=S.projects.find(x=>x.id===pid);if(!p)return null;
+ const T=S.tasks.filter(t=>t.pid===pid),hl=HL[health(p,S.tasks)],pend=pending(S).some(x=>x.id===pid);
+ return h`<div style=${{display:'grid',gap:16}}>
+ <div className="card"><div style=${{display:'flex',justifyContent:'space-between',gap:12,flexWrap:'wrap'}}><div><h2 style=${{fontSize:20,margin:0}}>${p.name}</h2><span className="sub">${p.client}, due ${fmt(p.due)}</span></div><div style=${{display:'flex',gap:8,alignItems:'center'}}><${Badge} c=${hl[1]}>${hl[0]}<//><b style=${{fontSize:22}}>${prog(p,S.tasks)}%</b></div></div>
+ <${Track} stage=${p.stage}/>
+ <div style=${{display:'flex',gap:8,flexWrap:'wrap',marginTop:14,alignItems:'center'}}><span className="sub">Change stage:</span>
+ <button className="btn sm" disabled=${p.stage===0} onClick=${()=>A.stage(pid,p.stage-1)}>Back</button>
+ <${Sel} v=${p.stage} on=${v=>A.stage(pid,+v)} opts=${STAGES.map((s,i)=>[i,s])}/>
+ <button className="btn sm p" disabled=${p.stage===6} onClick=${()=>A.stage(pid,p.stage+1)}>Advance to ${STAGES[Math.min(p.stage+1,6)]}</button></div></div>
+ ${pend&&h`<div className="ban">All ${STAGES[p.stage]} tasks are complete. Approve the move to ${STAGES[p.stage+1]}?<button className="btn sm p" onClick=${()=>A.stage(pid,p.stage+1)}>Approve</button></div>`}
+ <div className="grid"><div className="card"><h2>Tasks <button className="btn sm p" onClick=${()=>openTask(pid)}>Create task</button></h2>${T.length?h`<${TaskTable} S=${S} A=${A} tasks=${T}/>`:h`<p className="sub">No tasks yet. Create one and assign it to a team member.</p>`}</div>
+ <div className="card"><h2>Project activity</h2><${Feed} S=${S} pid=${pid} n=${10}/></div></div></div>`;
+}
+function Tasks({S,A}){const [pf,setPf]=useState('all'),[sf,setSf]=useState('all');const T=S.tasks.filter(t=>(pf==='all'||t.pid===pf)&&(sf==='all'||t.status===sf));
+ return h`<div className="card"><div style=${{display:'flex',gap:8,marginBottom:12,flexWrap:'wrap'}}><${Sel} v=${pf} on=${setPf} opts=${[['all','All projects'],...S.projects.map(p=>[p.id,p.name])]}/><${Sel} v=${sf} on=${setSf} opts=${[['all','All statuses'],...STATUS.map(x=>[x,x])]}/></div><${TaskTable} S=${S} A=${A} tasks=${T} showProject=${true}/></div>`}
+function Team({S,A}){const [add,setAdd]=useState(false),[f,setF]=useState({name:'',role:''});
+ return h`<div><div style=${{marginBottom:14}}><button className="btn p" onClick=${()=>setAdd(true)}>Add team member</button></div><div className="team">${S.employees.map(e=>{const T=S.tasks.filter(t=>t.emp===e.id),o=T.filter(t=>t.status!=='Done').length;return h`<div className="card" key=${e.id}><div style=${{display:'flex',gap:10,alignItems:'center',marginBottom:12}}><${Av} S=${S} id=${e.id}/><div><b>${e.name}</b><div className="sub">${e.role}</div></div></div><div className="bl"><span>${o} open</span><span className="sub">${T.length-o} done</span></div><${Bar} v=${Math.min(100,o/5*100)}/>${T.some(overdue)&&h`<p className="bad" style=${{margin:'8px 0 0'}}>${T.filter(overdue).length} overdue</p>`}</div>`})}</div>
+ ${add&&h`<${Modal} title="Add team member" onClose=${()=>setAdd(false)}><div className="form"><label>Name<input value=${f.name} onChange=${e=>setF({...f,name:e.target.value})}/></label><label>Role<input value=${f.role} onChange=${e=>setF({...f,role:e.target.value})}/></label><button className="btn p" disabled=${!f.name.trim()} onClick=${()=>{A.addEmp(f.name.trim(),f.role.trim()||'Team member');setAdd(false);setF({name:'',role:''})}}>Add member</button></div><//>`}</div>`}
+function Analytics({S}){
+ const cols={'To Do':'var(--mut)','In Progress':'var(--pri)',Blocked:'var(--bad)',Done:'var(--ok)'},C=2*Math.PI*40;let off=0;
+ const cn=STATUS.map(s=>[s,S.tasks.filter(t=>t.status===s).length]),tot=S.tasks.length||1;
+ return h`<div className="grid"><div className="col"><div className="card"><h2>Progress by project</h2><div className="bars">${S.projects.map(p=>h`<div key=${p.id}><div className="bl"><span>${p.name}</span><span>${prog(p,S.tasks)}%</span></div><${Bar} v=${prog(p,S.tasks)}/></div>`)}</div></div>
+ <div className="card"><h2>Overdue tasks by person</h2><div className="bars">${S.employees.map(e=>{const n=S.tasks.filter(t=>t.emp===e.id&&overdue(t)).length;return h`<div key=${e.id}><div className="bl"><span>${e.name}</span><span>${n}</span></div><${Bar} v=${n*50}/></div>`})}</div></div></div>
+ <div className="card"><h2>Tasks by status</h2><div className="donut"><svg width="150" height="150" viewBox="0 0 100 100"><g transform="rotate(-90 50 50)">${cn.map(([s,n])=>{const l=n/tot*C,el=h`<circle key=${s} cx="50" cy="50" r="40" fill="none" strokeWidth="14" style=${{stroke:cols[s]}} strokeDasharray=${l+' '+(C-l)} strokeDashoffset=${-off}/>`;off+=l;return el})}</g><text x="50" y="54" textAnchor="middle" fontSize="16" fontWeight="800" fill="currentColor">${S.tasks.length}</text></svg>
+ <ul>${cn.map(([s,n])=>h`<li key=${s}><span style=${{display:'inline-block',width:10,height:10,borderRadius:3,background:cols[s],marginRight:8}}></span>${s}: <b>${n}</b></li>`)}</ul></div></div></div>`;
+}
+/* ---------- employee view ---------- */
+function TaskCard({t,S,A,me}){
+ const [o,setO]=useState(false),p=S.projects.find(x=>x.id===t.pid),done=t.status==='Done';
+ return h`<div className=${'tcard'+(done?' dn':'')}><button className=${'chk'+(done?' on':'')} onClick=${()=>A.status(t.id,done?'In Progress':'Done',me)} aria-label=${done?'Reopen task':'Mark complete'}>✓</button>
+ <div className="tb"><div className="tt">${t.title}</div><div className="tm"><span>${p.name}</span><${Badge} c="pri">${STAGES[t.stage]}<//><${Pri} p=${t.pri}/><span className=${overdue(t)?'bad':''}>${dueLabel(t.due)}</span></div>${o&&h`<p className="ins">${t.instr||'No instructions provided.'}</p>`}</div>
+ <div className="tr"><${Sel} v=${t.status} on=${v=>A.status(t.id,v,me)} opts=${STATUS.map(x=>[x,x])}/><button className="lnk" onClick=${()=>setO(!o)}>${o?'Hide instructions':'Instructions'}</button></div></div>`;
+}
+function Employee({S,A,me}){
+ const [tab,setTab]=useState('all'),[bell,setBell]=useState(false),e=S.employees.find(x=>x.id===me);
+ const mine=S.tasks.filter(t=>t.emp===me),td=day(0);
+ const F={today:t=>t.status!=='Done'&&t.due===td,upcoming:t=>t.status!=='Done'&&t.due>td,overdue:overdue,done:t=>t.status==='Done',all:()=>true};
+ const L={all:'All',today:'Today',upcoming:'Upcoming',overdue:'Overdue',done:'Completed'};
+ const list=mine.filter(F[tab]).sort((a,b)=>a.due<b.due?-1:1),nots=S.notifs.filter(n=>n.emp===me),un=nots.filter(n=>!n.read).length;
+ return h`<div className="emp"><div style=${{display:'flex',justifyContent:'space-between',alignItems:'center',gap:10}}><div><h1 style=${{margin:0,fontSize:26,letterSpacing:-.5}}>Hey ${e.name.split(' ')[0]}! 👋</h1><span className="sub">Here’s your to-do list for today.</span></div>
+ <div className="bell"><button className="btn" onClick=${()=>{setBell(!bell);if(!bell)A.read(me)}}>Notifications</button>${un>0&&h`<em>${un}</em>`}${bell&&h`<div className="pop">${nots.length?nots.map(n=>h`<div className="li" key=${n.id}><span>${n.text}</span><small className="sub">${rel(n.ts)}</small></div>`):h`<p className="sub">No notifications yet.</p>`}</div>`}</div></div>
+ <div className="kpis three" style=${{marginTop:18}}>${[['My tasks',mine.filter(t=>t.status!=='Done').length,'','▤'],['Completed',mine.filter(F.done).length,'k-ok','✓'],['Overdue',mine.filter(overdue).length,'k-warn','◷']].map(k=>h`<div key=${k[0]} className=${'card kpi '+k[2]}><i>${k[3]}</i><div><span>${k[0]}</span><b>${k[1]}</b></div></div>`)}</div><div className="tabs">${Object.keys(L).map(k=>h`<button key=${k} className=${tab===k?'on':''} onClick=${()=>setTab(k)}>${L[k]} (${mine.filter(F[k]).length})</button>`)}</div>
+ ${list.length?list.map(t=>h`<${TaskCard} key=${t.id} t=${t} S=${S} A=${A} me=${me}/>`):h`<div className="card sub">Nothing here. Switch tabs to see other tasks.</div>`}<div className="banner"><b>${mine.filter(t=>t.status!=='Done'&&t.due<=td).length?mine.filter(t=>t.status!=='Done'&&t.due<=td).length+' task(s) need you today':'You’re all set for today! 🚀'}</b><span className="sub">Keep going, you’re doing great.</span></div></div>`;
+}
+/* ---------- app shell ---------- */
+function App(){
+ const [S,setS]=useState(load),[ui,setUi]=useState({role:'owner',emp:'e1',view:'dash',pid:null}),[modal,setModal]=useState(null),[toast,setToast]=useState('');
+ useEffect(()=>save(S),[S]);
+ const say=m=>{setToast(m);setTimeout(()=>setToast(''),2200)};
+ const who=ui.role==='owner'?'Manager':null;
+ const A={
+  addTask:t=>{setS(s=>log({...s,tasks:[...s.tasks,{...t,id:uid()}],notifs:[{id:uid(),emp:t.emp,text:'New task: '+t.title,ts:Date.now(),read:false},...s.notifs]},'Manager','assigned “'+t.title+'” to '+nm(s,t.emp),t.pid));say('Task created and assigned')},
+  status:(id,st,me)=>{setS(s=>{const t=s.tasks.find(x=>x.id===id);if(!t||t.status===st)return s;return log({...s,tasks:s.tasks.map(x=>x.id===id?{...x,status:st}:x)},me?nm(s,me):'Manager',st==='Done'?'completed “'+t.title+'”':'updated “'+t.title+'” to '+st,t.pid)});if(st==='Done')say('Task completed. Manager dashboard updated')},
+  reassign:(id,emp)=>setS(s=>{const t=s.tasks.find(x=>x.id===id);if(t.emp===emp)return s;return log({...s,tasks:s.tasks.map(x=>x.id===id?{...x,emp}:x),notifs:[{id:uid(),emp,text:'New task: '+t.title,ts:Date.now(),read:false},...s.notifs]},'Manager','reassigned “'+t.title+'” to '+nm(s,emp),t.pid)}),
+  stage:(pid,i)=>{setS(s=>log({...s,projects:s.projects.map(p=>p.id===pid?{...p,stage:i}:p)},'Manager','moved '+s.projects.find(p=>p.id===pid).name+' to '+STAGES[i],pid));say('Stage updated: '+STAGES[i])},
+  addProject:p=>{const id=uid();setS(s=>log({...s,projects:[...s.projects,{...p,id,stage:0}]},'Manager','created project '+p.name,id));setUi(u=>({...u,view:'project',pid:id}));say('Project created')},
+  addEmp:(name,role)=>setS(s=>({...s,employees:[...s.employees,{id:uid(),name,role}]})),
+  read:me=>setS(s=>({...s,notifs:s.notifs.map(n=>n.emp===me?{...n,read:true}:n)}))
+ };
+ const go=(view,pid)=>setUi(u=>({...u,view,pid:pid||null}));
+ const nav=[['dash','Dashboard'],['projects','Projects'],['tasks','Tasks'],['team','Team'],['analytics','Analytics']];
+ const titles={dash:(new Date().getHours()<12?'Good morning':new Date().getHours()<17?'Good afternoon':'Good evening')+', Sarah!',projects:'Projects',tasks:'All tasks',team:'Team',analytics:'Analytics',project:'Project details'};
+ const owner=ui.role==='owner';
+ const Switch=h`<div className="seg"><button className=${owner?'on':''} onClick=${()=>setUi({...ui,role:'owner'})}>Owner / Manager</button><button className=${!owner?'on':''} onClick=${()=>setUi({...ui,role:'emp'})}>Employee</button></div>`;
+ const reset=()=>{if(confirm('Reset all demo data?'))setS(seed())};
+ const modals=h`${modal&&modal.t==='task'&&h`<${TaskForm} S=${S} pid=${modal.pid} onClose=${()=>setModal(null)} onSave=${t=>{A.addTask(t);setModal(null)}}/>`}${modal&&modal.t==='proj'&&h`<${ProjectForm} onClose=${()=>setModal(null)} onSave=${p=>{A.addProject(p);setModal(null)}}/>`}${toast&&h`<div className="toast" role="status">${toast}</div>`}`;
+ if(!owner){const em=S.employees.find(x=>x.id===ui.emp);return h`<div className="app"><nav className="side"><div className="brand"><i></i>Fuel India</div><button className="nav on">My Tasks</button><div className="foot"><div className="chip"><${Av} S=${S} id=${ui.emp}/><div><b style=${{color:'#fff'}}>${em.name}</b><br/>${em.role}</div></div></div></nav><main className="main"><div className="top"><div style=${{flex:1}}></div><span className="pill">${new Date().toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'})}</span>${Switch}<${Sel} v=${ui.emp} on=${v=>setUi({...ui,emp:v})} opts=${S.employees.map(e=>[e.id,e.name])}/></div><${Employee} key=${ui.emp} S=${S} A=${A} me=${ui.emp}/>${modals}</main></div>`}
+ return h`<div className="app"><nav className="side"><div className="brand"><i></i>Fuel India</div>${nav.map(n=>h`<button key=${n[0]} className=${'nav'+(ui.view===n[0]||(n[0]==='projects'&&ui.view==='project')?' on':'')} onClick=${()=>go(n[0])}>${n[1]}${n[0]==='dash'&&pending(S).length>0&&h`<Badge c="warn">${pending(S).length}</Badge>`}</button>`)}<div className="foot"><div className="chip"><span className="av" style=${{background:'#5b4bdb'}}>SM</span><div><b style=${{color:'#fff'}}>Sarah Menon</b><br/>CEO</div></div><button className="lnk" style=${{color:'#a9a4ff',marginTop:10,padding:0}} onClick=${reset}>Reset demo data</button></div></nav>
+ <main className="main"><div className="top"><h1>${titles[ui.view]}${ui.view==='dash'&&h`<small>Here’s your complete overview across all projects.</small>`}</h1><span className="pill">${new Date().toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'})}</span>${Switch}<button className="btn" onClick=${()=>setModal({t:'proj'})}>Create project</button><button className="btn p" onClick=${()=>setModal({t:'task'})}>Create task</button></div>
+ ${ui.view==='dash'&&h`<${Dashboard} S=${S} A=${A} go=${go}/>`}${ui.view==='projects'&&h`<${Projects} S=${S} go=${go}/>`}${ui.view==='project'&&h`<${Detail} S=${S} A=${A} pid=${ui.pid} openTask=${pid=>setModal({t:'task',pid})}/>`}${ui.view==='tasks'&&h`<${Tasks} S=${S} A=${A}/>`}${ui.view==='team'&&h`<${Team} S=${S} A=${A}/>`}${ui.view==='analytics'&&h`<${Analytics} S=${S}/>`}</main>${modals}</div>`;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(h`<${App}/>`);
+</script></body></html>
